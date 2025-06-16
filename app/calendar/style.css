@@ -1,0 +1,412 @@
+:root {
+    --main-bg: #0a0a1a;
+    --calendar-bg: #1a1a2a;
+    --border-color: #4a2080;
+    --text-color: #8a60da;
+    --highlight-color: #ff6a5a;
+    --day-color: #60a0ff;
+    --weekend-color: #ff5a7a;
+    --header-color: #ffd700;
+    --button-bg: #4a2080;
+    --button-hover: #6a40a0;
+    --current-day-bg: #2a4060;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Press Start 2P', cursive;
+    background-color: var(--main-bg);
+    color: var(--text-color);
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100vh;
+    background-image:
+        radial-gradient(#2a1a4a 1px, transparent 1px),
+        radial-gradient(#2a1a4a 1px, transparent 1px);
+    background-size: 20px 20px;
+    background-position: 0 0, 10px 10px;
+    overflow-x: hidden;
+    position: relative;
+    transition: filter 0.3s ease;
+}
+
+body.blur-background > *:not(#calendar-loading) {
+    filter: blur(5px);
+}
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--main-bg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    transition: opacity 0.5s ease;
+}
+
+.loading-text {
+    font-size: 24px;
+    color: var(--text-color);
+    margin-bottom: 20px;
+    animation: pulse 1.5s infinite;
+}
+
+.loading-bar {
+    width: 200px;
+    height: 20px;
+    background-color: var(--calendar-bg);
+    border: 4px solid var(--border-color);
+    position: relative;
+    overflow: hidden;
+}
+
+.loading-progress {
+    height: 100%;
+    width: 0%;
+    background-color: var(--highlight-color);
+    transition: width 0.5s;
+}
+
+/* Calendar Loading Animation */
+.calendar-loading {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9000;
+    background-color: rgba(10, 10, 26, 0.7);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.calendar-spinner {
+    width: 80px;
+    height: 80px;
+    border: 6px solid transparent;
+    border-top-color: var(--highlight-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+.calendar-loading-text {
+    font-size: 18px;
+    color: var(--header-color);
+    text-shadow: 2px 2px 0 #000;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.clock-box {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    padding: 10px;
+    border: 4px solid var(--border-color);
+    background-color: var(--calendar-bg);
+    color: var(--highlight-color);
+    font-size: 14px;
+    box-shadow: 0 0 10px rgba(138, 96, 218, 0.5);
+    animation: float 3s ease-in-out infinite;
+    text-shadow: 2px 2px 0 #000;
+}
+
+.title {
+    margin-top: 80px;
+    font-size: 28px;
+    color: var(--header-color);
+    text-shadow: 3px 3px 0 #000;
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+    animation: pulse 3s infinite;
+}
+
+form {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: var(--calendar-bg);
+    border: 4px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0 0 20px rgba(74, 32, 128, 0.6);
+    max-width: 600px;
+    width: 90%;
+    position: relative;
+    overflow: hidden;
+}
+
+form::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--highlight-color), var(--text-color), var(--highlight-color));
+    animation: rainbow 3s linear infinite;
+    background-size: 200% 100%;
+}
+
+input[type="month"] {
+    font-family: 'Press Start 2P', cursive;
+    padding: 10px;
+    background-color: var(--main-bg);
+    color: var(--text-color);
+    border: 2px solid var(--border-color);
+    outline: none;
+}
+
+input[type="submit"] {
+    font-family: 'Press Start 2P', cursive;
+    padding: 12px;
+    background-color: var(--button-bg);
+    color: var(--header-color);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 0 #2a1040;
+    position: relative;
+    top: 0;
+}
+
+input[type="submit"]:hover {
+    background-color: var(--button-hover);
+}
+
+input[type="submit"]:active {
+    top: 4px;
+    box-shadow: 0 0 0 #2a1040;
+}
+
+.calendar-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 600px;
+    margin: 10px auto;
+}
+
+.calendar-nav a {
+    text-decoration: none;
+    color: var(--text-color);
+    background-color: var(--button-bg);
+    padding: 8px 12px;
+    border: 2px solid var(--border-color);
+    transition: all 0.3s;
+    font-size: 12px;
+}
+
+.calendar-nav a:hover {
+    background-color: var(--button-hover);
+    transform: scale(1.05);
+}
+
+.calendar-nav span {
+    font-size: 16px;
+    color: var(--header-color);
+    text-shadow: 2px 2px 0 #000;
+}
+
+.calendar {
+    width: 90%;
+    max-width: 600px;
+    margin: 20px auto;
+    background-color: var(--calendar-bg);
+    border: 4px solid var(--border-color);
+    padding: 10px;
+    box-shadow: 0 0 20px rgba(74, 32, 128, 0.6);
+    position: relative;
+    overflow: hidden;
+}
+
+.calendar::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--highlight-color), var(--text-color), var(--highlight-color));
+    animation: rainbow 3s linear infinite;
+    background-size: 200% 100%;
+}
+
+.calendar table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 4px;
+}
+
+.calendar td {
+    text-align: center;
+    padding: 10px;
+    border: 2px solid var(--border-color);
+    background-color: var(--main-bg);
+    position: relative;
+    transition: all 0.3s;
+}
+
+.calendar tr:first-child td {
+    background-color: var(--button-bg);
+    color: var(--header-color);
+    font-weight: bold;
+    border-color: var(--button-hover);
+}
+
+.calendar td:hover:not(:empty) {
+    transform: scale(1.05);
+    box-shadow: 0 0 10px var(--text-color);
+    z-index: 1;
+}
+
+.calendar td:not(:empty) {
+    cursor: pointer;
+}
+
+.calendar td.weekend {
+    color: var(--weekend-color);
+}
+
+.calendar td.current-day {
+    background-color: var(--current-day-bg);
+    color: var(--highlight-color);
+    border-color: var(--highlight-color);
+    animation: pulse 2s infinite;
+}
+
+@keyframes float {
+    0% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        opacity: 0.6;
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0.6;
+    }
+}
+
+@keyframes rainbow {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    100% {
+        background-position: 200% 50%;
+    }
+}
+
+.stars {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.error-message {
+    color: var(--highlight-color);
+    margin: 10px 0;
+    padding: 10px;
+    border: 2px solid var(--highlight-color);
+    background-color: rgba(255, 106, 90, 0.2);
+    text-align: center;
+    width: 90%;
+    max-width: 600px;
+}
+
+/* Адаптивность */
+@media (max-width: 480px) {
+    .calendar td {
+        padding: 8px 4px;
+        font-size: 10px;
+    }
+
+    .clock-box {
+        font-size: 10px;
+        padding: 8px;
+        top: 10px;
+        left: 10px;
+    }
+
+    .title {
+        font-size: 18px;
+        margin-top: 60px;
+    }
+
+    .loading-text {
+        font-size: 16px;
+    }
+    
+    .calendar-loading-text {
+        font-size: 14px;
+    }
+    
+    .calendar-spinner {
+        width: 60px;
+        height: 60px;
+        border-width: 4px;
+    }
+
+    form {
+        padding: 15px;
+    }
+
+    input[type="month"],
+    input[type="submit"] {
+        padding: 8px;
+        font-size: 10px;
+    }
+
+    .calendar-nav {
+        font-size: 10px;
+    }
+
+    .calendar-nav span {
+        font-size: 12px;
+    }
+}

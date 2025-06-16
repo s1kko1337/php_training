@@ -1,0 +1,18 @@
+services:
+  web:
+    build: .
+    container_name: php-apache
+    networks:
+      - linux-sandbox
+    ports:
+      - "8080:80"
+    volumes:
+      - ./app:/var/www/html
+    environment:
+      - WEB_DOCUMENT_ROOT=/var/www/html
+      - WEB_ALIAS_DOMAIN=localhost
+      - DB_HOST=host.docker.internal
+
+networks:
+  linux-sandbox:
+    driver: bridge
