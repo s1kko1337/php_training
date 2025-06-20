@@ -1,0 +1,12 @@
+{
+    "name": "mike/linux-sandbox",
+    "authors": [
+        {
+            "name": "s1kko1337",
+            "email": "r.melo.kk@gmail.com"
+        }
+    ],
+    "require": {
+        "twig/twig": "^3.21"
+    }
+}
